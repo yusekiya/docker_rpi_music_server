@@ -1,0 +1,29 @@
+version: '2'
+services:
+  mpd:
+    image: tobi312/rpi-mpd
+    ports:
+      - "6600:6600"
+    networks:
+      - music_stack
+    devices:
+      - '/dev/snd:/dev/snd'
+    volumes:
+      - '/mnt/mpd/music:/mpd/music:ro'
+      - '/mnt/mpd/playlists:/mpd/playlists'
+      - '/mnt/mpd/data:/mpd/data'
+      - './mpd.conf:/mpd/conf/mpd.conf'
+
+  ympd:
+    build:
+      context: ./ympd
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mpd
+    networks:
+      - music_stack
+
+networks:
+  music_stack:
+    driver: bridge
